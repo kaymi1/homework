@@ -42,12 +42,11 @@ public class CounterWordsInText{
         return getArrayWords().size();
     }
 
-    public void returnWordsInFile(){
+    public Set<String> setWordsFromFile(){
         StringBuilder word;
         Integer j;
 
-        for (String text: getArrayText()
-             ) {
+        for (String text: getArrayText()) {
             word = new StringBuilder();
             for (int i = 0; i < text.length(); i++) {
                 if((text.charAt(i) >= 'a' && text.charAt(i) <= 'z') ||
@@ -73,6 +72,7 @@ public class CounterWordsInText{
                 word = new StringBuilder();
             }
         }
+        return arrayWords;
     }
 
     public void sortedWordsLength(){
@@ -120,18 +120,15 @@ public class CounterWordsInText{
         }
     }
 
-    public void showRowValue(){
+    public void showUserRowValue(){
         relationRowValue();
-        for (Integer i: getUserListValueForOutput()
-             ) {
+        for (Integer i: getUserListValueForOutput()) {
             System.out.println( "("  + i + ") " + outputRows.get(i));
         }
     }
 
-    public Iterator<Integer> iterator(){
-        setListForIterator(new ArrayList<>(
-                Arrays.asList(2, 21, 22, 32, 11, 18)
-        ));
+    public Iterator<Integer> iterator(ArrayList<Integer> list){
+        setListForIterator(list);
         myIterator =  new CustomIterator<Integer>(this, getListForIterator());
         return myIterator;
     }
@@ -150,18 +147,14 @@ public class CounterWordsInText{
         }
     }
 
-    public void printWordsInFile(){
+    public void printWordsFromFile(){
         Iterator it = getArrayWords().iterator();
-        while(it.hasNext()){
-            System.out.println(it.next());
-        }
+        it.forEachRemaining(System.out::println);
     }
 
     public void printSortedWords(){
         Iterator it = getSortedWordsLength().iterator();
-        while (it.hasNext()){
-            System.out.println(it.next());
-        }
+        it.forEachRemaining(System.out::println);
     }
 
     public Map<String, Integer> getCounterWords() {

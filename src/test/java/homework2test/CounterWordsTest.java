@@ -2,12 +2,40 @@ package homework2test;
 
 import homework2.CounterWordsInText;
 import homework2.CreateText;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.*;
 
 
-public class TestCounterWords {
+public class CounterWordsTest {
 
+    private CounterWordsInText counterText;
+    private CounterWordsInText counterArrayText;
+    private String exampleText1;
+    private String exampleText2;
+    private ArrayList<String> arrayText;
+
+    @Before
+    public void setUp(){
+        exampleText1 = "This is the text";
+        exampleText2 = "This is another text";
+        arrayText = new ArrayList<>();
+        arrayText.add(exampleText1);
+        arrayText.add(exampleText2);
+
+        counterArrayText = new CounterWordsInText(arrayText);
+
+        counterText = new CounterWordsInText(exampleText1);
+    }
+
+    @Test
+    public void testReturnWordsFromFile(){
+        Set<?> arrayWords = counterArrayText.setWordsFromFile();
+
+        Assert.assertArrayEquals(arrayWords.toArray(), counterArrayText.getArrayWords().toArray());
+    }
 
     public static void main(String[] args) {
 
