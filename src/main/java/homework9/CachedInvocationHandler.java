@@ -9,7 +9,7 @@ public class CachedInvocationHandler implements InvocationHandler {
     private final Object delegate;
     private final static String filename = "cache.file";
     private final static String filenameTemp = "cacheTemp.file";
-    private Boolean isMainFileExist;
+    private final Boolean isMainFileExist;
     private FileOutputStream fos;
     private ObjectOutput outstr;
     private Object resultFromCache;
@@ -33,9 +33,7 @@ public class CachedInvocationHandler implements InvocationHandler {
             } catch (IOException e) {
                 System.out.println("IOException");
             }
-
         }
-
     }
 
     public static <T> T cache(Object delegate) {
@@ -71,44 +69,39 @@ public class CachedInvocationHandler implements InvocationHandler {
         }
     }
 
-    public void close() {
-        try {
-            System.out.println("Rewrite the file");
-//            Method method = outstr.getClass().getDeclaredMethod("drain");
-//            method.setAccessible(true);
-//            method.invoke(outstr);
-            outstr.flush();
-            outstr.close();
-        } catch (IOException e) {
-            System.out.println("IOException when it is closed");
-        }
+    public Object delegationToMethod(Method method, Object[] args) throws Throwable{
+        System.out.println("Delegation to " + method.getName());
+        return invoke(method, args);
+    }
+
+    public void getFromCache(Method method, Object[] args){
+        System.out.format("Result from the cache file for [%s] with param [%s] [%s]\n",
+                method.getName(), args[0], args[1]);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (!method.isAnnotationPresent(Cache.class)) return invoke(method, args);
+        if (!method.isAnnotationPresent(Cache.class)) return delegationToMethod(method, args);
         Cache cache = method.getAnnotation(Cache.class);
         Object result = null;
         if (cache.cacheType().equals("IN_MEMORY")) {
             if (!memoryCache.containsKey(key(method, args))) {
-                System.out.println("Delegation to " + method.getName());
-                result = invoke(method, args);
+                result = delegationToMethod(method, args);
                 memoryCache.put(key(method, args), result);
             }
             return memoryCache.get(key(method, args));
         } else if (cache.cacheType().equals("FILE")) {
-            if (!isContainsCacheInFile(method, args)) {
-                System.out.println("Delegation to " + method.getName());
-                result = invoke(method, args);
+            if (isContainsCacheInFile(method, args)) {
+                getFromCache(method, args);
+                return resultFromCache;
+            } else {
+                result = delegationToMethod(method, args);
                 CacheList cacheList = new CacheList(args, result);
 
-                // if the main file is not exist write object to the filenameTemp file
+                // if the main file is exist write the object to the filename file
+                // if it isn't write the object to the filenameTemp file
                 outstr.writeObject(cacheList);
                 return result;
-            } else {
-                System.out.format("Result from the cache file for [%s] with param [%s] [%s]\n",
-                        method.getName(), args[0], args[1]);
-                return resultFromCache;
             }
         }
         return 0;
@@ -140,45 +133,26 @@ public class CachedInvocationHandler implements InvocationHandler {
         }
         return true;
     }
+    private boolean checkCacheInFile(Object[] args, String filename) throws Throwable{
+        FileInputStream fis0 = new FileInputStream(filename);
+        ObjectInputStream in0 = new ObjectInputStream(fis0);
+        try {
+            for (; ; ) {
+                CacheList cacheList = (CacheList) in0.readObject();
+                if (isArgsTheSame(args, cacheList.getArgs())) {
+                    resultFromCache = cacheList.getResult();
+                    return true;
+                }
+            }
+        } catch (EOFException e) {}
+        return false;
+    }
 
     private boolean isContainsCacheInFile(Method method, Object[] args) throws Throwable {
-        // TODO: clean code
+        Boolean isContainsInMainFile = checkCacheInFile(args, filename);
         if (isMainFileExist) {
-            fis0 = new FileInputStream(filename);
-            in0 = new ObjectInputStream(fis0);
-            try {
-                for (; ; ) {
-                    CacheList cacheList = (CacheList) in0.readObject();
-                    if (isArgsTheSame(args, cacheList.getArgs())) {
-                        resultFromCache = cacheList.getResult();
-                        return true;
-                    }
-                }
-            } catch (EOFException e) {}
-            FileInputStream fis1 = new FileInputStream(filenameTemp);
-            ObjectInputStream in1 = new ObjectInputStream(fis1);
-            try {
-                for (; ; ) {
-                    CacheList cacheList = (CacheList) in1.readObject();
-                    if (isArgsTheSame(args, cacheList.getArgs())) {
-                        resultFromCache = cacheList.getResult();
-                        return true;
-                    }
-                }
-            } catch (EOFException e) {}
-        } else{
-            fis0 = new FileInputStream(filename);
-            in0 = new ObjectInputStream(fis0);
-            try {
-                for (; ; ) {
-                    CacheList cacheList = (CacheList) in0.readObject();
-                    if (isArgsTheSame(args, cacheList.getArgs())) {
-                        resultFromCache = cacheList.getResult();
-                        return true;
-                    }
-                }
-            } catch (EOFException e) {}
+            return isContainsInMainFile || checkCacheInFile(args, filenameTemp);
         }
-        return false;
+        return isContainsInMainFile;
     }
 }
