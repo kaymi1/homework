@@ -27,13 +27,14 @@ public class PluginManager {
         } catch (IllegalAccessException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException | InstantiationException e) {
-            System.out.println(e.getMessage());
+            System.out.println("The class is not found");
         }
 
         return null;
     }
 
-    private URLClassLoader getURLClassLoader(String directory, boolean parent) throws MalformedURLException {
+    private URLClassLoader getURLClassLoader(String directory, boolean parent)
+            throws MalformedURLException {
         File dir = new File(directory);
         URLClassLoader urlClassLoader;
         if (!parent) {
