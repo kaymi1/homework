@@ -3,39 +3,39 @@ package homework8;
 import java.io.Serializable;
 
 public class Person implements Serializable {
-    private int age;
-    private String name;
-    private String profession;
+    private Object age;
+    private Object name;
+    private Object profession;
     private static final long serialVersionUID = 1L;
 
     public Person(){}
-    public Person(int age, String name, String profession){
+    public Person(Object age, Object name, Object profession){
         this.setAge(age);
         this.setName(name);
         this.setProfession(profession);
     }
 
-    public int getAge() {
+    public Object getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Object age) {
         this.age = age;
     }
 
-    public String getName() {
+    public Object getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Object name) {
         this.name = name;
     }
 
-    public String getProfession() {
+    public Object getProfession() {
         return profession;
     }
 
-    public void setProfession(String profession) {
+    public void setProfession(Object profession) {
         this.profession = profession;
     }
 }
