@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Cache {
     String cacheType();//default "IN_MEMORY";
+    Class[] identityBy() default {String.class, Integer.class};
+    long countList() default 0;
 }

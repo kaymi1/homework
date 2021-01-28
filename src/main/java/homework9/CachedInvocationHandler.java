@@ -10,6 +10,7 @@ public class CachedInvocationHandler implements InvocationHandler {
     private final static String filename = "cache.file";
     private final static String filenameTemp = "cacheTemp.file";
     private final Boolean isMainFileExist;
+    private Class[] identityBy;
     private FileOutputStream fos;
     private ObjectOutput outstr;
     private Object resultFromCache;
@@ -83,10 +84,20 @@ public class CachedInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (!method.isAnnotationPresent(Cache.class)) return delegationToMethod(method, args);
         Cache cache = method.getAnnotation(Cache.class);
+        identityBy = cache.identityBy();
         Object result = null;
         if (cache.cacheType().equals("IN_MEMORY")) {
             if (!memoryCache.containsKey(key(method, args))) {
                 result = delegationToMethod(method, args);
+                /* TODO: use reflect for countList member
+                Class<?> obj = result.getClass();
+                if(obj == List.class){
+                    List<String> resTemp = new ArrayList<String>(result);
+                    List<String> list = new ArrayList<>();
+                    for (String s : result) {
+
+                    }
+                }*/
                 memoryCache.put(key(method, args), result);
             }
             return memoryCache.get(key(method, args));
@@ -98,8 +109,8 @@ public class CachedInvocationHandler implements InvocationHandler {
                 result = delegationToMethod(method, args);
                 CacheList cacheList = new CacheList(args, result);
 
-                // if the main file is exist write the object to the filename file
-                // if it isn't write the object to the filenameTemp file
+                // if the main file exists write the object to the filenameTemp file
+                // if it doesn't write the object to the filename file
                 outstr.writeObject(cacheList);
                 return result;
             }
@@ -126,8 +137,20 @@ public class CachedInvocationHandler implements InvocationHandler {
     }
 
     private boolean isArgsTheSame(Object[] src, Object[] dst) {
-        for (int i = 0; i < src.length; i++) {
-            if (!src[i].toString().equals(dst[i].toString())) {
+        if(identityBy.length == 2){
+            for (int i = 0; i < src.length; i++) {
+                if (!src[i].toString().equals(dst[i].toString())) {
+                    return false;
+                }
+            }
+        }
+        else if(identityBy[0] == String.class){
+            if (!src[0].toString().equals(dst[0].toString())) {
+                return false;
+            }
+        }
+        else if(identityBy[0] == Integer.class){
+            if (!src[1].toString().equals(dst[1].toString())) {
                 return false;
             }
         }

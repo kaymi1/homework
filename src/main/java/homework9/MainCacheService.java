@@ -19,6 +19,17 @@ public class MainCacheService {
         System.out.println("Result is: "+service.doHardWork("D", 70) + "\n");
     }
 
+    public static void run2(Service service){
+        System.out.println("Result is: "+service.doHardWork("A", 21) + "\n");
+        System.out.println("Result is: "+service.doHardWork("A", 23) + "\n");
+        System.out.println("Result is: "+service.doHardWork("A", 21) + "\n");
+        System.out.println("Result is: "+service.doHardWork("B", 23) + "\n");
+        System.out.println("Result is: "+service.doHardWork("B", 21) + "\n");
+        System.out.println("Result is: "+service.doHardWork("A", 21) + "\n");
+        System.out.println("Result is: "+service.doHardWork("B", 23) + "\n");
+        System.out.println("Result is: "+service.doHardWork("A", 70) + "\n");
+    }
+
     public static void run1(Service service){
         // Cached data
         run(service);
