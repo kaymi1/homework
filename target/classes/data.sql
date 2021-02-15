@@ -1,0 +1,5 @@
+create table ANSWER (
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    number INT NOT NULL,
+    result VARCHAR(1000) NOT NULL
+)

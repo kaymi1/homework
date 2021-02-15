@@ -79,7 +79,5 @@ public class ProducerConsumerMultithreading {
         Consumer c = new Consumer(q);
         p.t.start();
         c.t.start();
-
-        System.out.println("Stop");
     }
 }

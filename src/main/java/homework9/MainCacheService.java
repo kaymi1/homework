@@ -1,10 +1,18 @@
 package homework9;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainCacheService {
     public static void main(String[] args) throws Throwable {
         Service service = CachedInvocationHandler.cache(new ServiceImpl());
         //run(service);
         run1(service);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        executorService.execute(()->{
+            run(service);
+        });
+
         CachedInvocationHandler.concatenateMainAndTempFiles();
     }
 

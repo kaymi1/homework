@@ -172,7 +172,7 @@ public class CachedInvocationHandler implements InvocationHandler {
     }
 
     private boolean isContainsCacheInFile(Method method, Object[] args) throws Throwable {
-        Boolean isContainsInMainFile = checkCacheInFile(args, filename);
+        boolean isContainsInMainFile = checkCacheInFile(args, filename);
         if (isMainFileExist) {
             return isContainsInMainFile || checkCacheInFile(args, filenameTemp);
         }
