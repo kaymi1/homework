@@ -1,7 +1,7 @@
 package homework1test;
 
 
-import homework1.BinarySearch;
+import BinarySearchAndHierarchy.BinarySearch;
 
 public class TestBinarySearch {
     public static void main(String[]args){

@@ -1,7 +1,7 @@
 package homework2test;
 
-import homework2.CounterWordsInText;
-import homework2.CreateText;
+import CounterWordsInTextAndCustomIterator.CounterWordsInText;
+import CounterWordsInTextAndCustomIterator.CreateText;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

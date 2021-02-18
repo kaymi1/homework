@@ -1,8 +1,8 @@
 package homework3test;
 
-import homework3.IntegerShmoption;
-import homework3.NumberShmoption;
-import homework3.Shmoption;
+import GenericFunc.IntegerShmoption;
+import GenericFunc.NumberShmoption;
+import GenericFunc.Shmoption;
 
 public class TestGenericFunc {
 
